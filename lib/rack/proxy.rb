@@ -57,7 +57,7 @@ module Rack
       target_response = HttpStreamingResponse.new(target_request, source_request.host, source_request.port)
 
       backend = @backend || source_request
-      use_ssl = backend.scheme == "https"
+      use_ssl = false
       ssl_verify_none = (env.delete('rack.ssl_verify_none') || @ssl_verify_none) == true
 
       # Create the response
