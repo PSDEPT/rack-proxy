@@ -54,7 +54,7 @@ module Rack
       end
 
       # Create a streaming response (the actual network communication is deferred, a.k.a. streamed)
-      target_response = HttpStreamingResponse.new(target_request, source_request.host, source_request.port)
+      target_response = HttpStreamingResponse.new(target_request, source_request.host, 80)
 
       backend = @backend || source_request
       use_ssl = false
@@ -63,11 +63,11 @@ module Rack
       # Create the response
       if @streaming
         # streaming response (the actual network communication is deferred, a.k.a. streamed)
-        target_response = HttpStreamingResponse.new(target_request, backend.host, backend.port)
+        target_response = HttpStreamingResponse.new(target_request, backend.host, 80)
         target_response.use_ssl = false
         target_response.verify_mode = OpenSSL::SSL::VERIFY_NONE if use_ssl && ssl_verify_none
       else
-        target_response = Net::HTTP.start(backend.host, backend.port, :use_ssl => use_ssl) do |http|
+        target_response = Net::HTTP.start(backend.host, 80, :use_ssl => use_ssl) do |http|
           http.verify_mode = OpenSSL::SSL::VERIFY_NONE if use_ssl && ssl_verify_none
           http.request(target_request)
         end
