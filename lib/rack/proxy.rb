@@ -60,20 +60,12 @@ module Rack
       use_ssl = false
       ssl_verify_none = (env.delete('rack.ssl_verify_none') || @ssl_verify_none) == true
 
-      # Create the response
-      if @streaming
-        # streaming response (the actual network communication is deferred, a.k.a. streamed)
-        target_response = HttpStreamingResponse.new(target_request, backend.host, 80)
-        target_response.use_ssl = false
-        target_response.verify_mode = OpenSSL::SSL::VERIFY_NONE if use_ssl && ssl_verify_none
-      else
-        target_response = Net::HTTP.start(backend.host, 80, :use_ssl => use_ssl) do |http|
-          http.verify_mode = OpenSSL::SSL::VERIFY_NONE if use_ssl && ssl_verify_none
-          http.request(target_request)
-        end
+      target_response = Net::HTTP.start(backend.host, 80, :use_ssl => use_ssl) do |http|
+        http.verify_mode = OpenSSL::SSL::VERIFY_NONE if use_ssl && ssl_verify_none
+        http.request(target_request)
       end
 
-      headers = (target_response.respond_to?(:headers) && target_response.headers) || {}
+      headers = target_response.to_hash
       body    = target_response.body
       body    = [body] unless body.respond_to?(:each)
 

@@ -6,7 +6,7 @@ class RackProxyTest < Test::Unit::TestCase
     attr_accessor :host
 
     def rewrite_env(env)
-      env["HTTP_HOST"] = self.host || 'www.trix.pl'
+      env["HTTP_HOST"] = self.host || 'api.staging.psdept.com'
       env
     end
   end
@@ -23,7 +23,8 @@ class RackProxyTest < Test::Unit::TestCase
 
   def test_http_full_request
     app(:streaming => false)
-    get "/"
+    get "/stores.json"
+    p last_response.to_hash
     assert last_response.ok?
     assert_match(/Jacek Becela/, last_response.body)
   end
