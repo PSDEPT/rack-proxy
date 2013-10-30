@@ -82,7 +82,7 @@ module Rack
 
     def extract_http_request_headers(env)
       headers = env.reject do |k, v|
-        (!(/^HTTP_[A-Z_]+$/ === k) && k != 'HTTP_AUTHORIZATION' && k != 'HTTP_ACCEPT') || v.nil?
+        v.nil?
       end.map do |k, v|
         [reconstruct_header_name(k), v]
       end.inject(Utils::HeaderHash.new) do |hash, k_v|
