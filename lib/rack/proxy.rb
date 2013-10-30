@@ -67,14 +67,13 @@ module Rack
 
       headers = target_response.to_hash
       body    = target_response.body
-      body    = [body] unless body.respond_to?(:each)
 
       [target_response.code, headers, body]
     end
 
     def extract_http_request_headers(env)
       headers = env.reject do |k, v|
-        (k != 'CONTENT_TYPE' && k != 'CONTENT_LENGTH' && !(/^HTTP_[A-Z_]+$/ === k)) || v.nil?
+        !(/^HTTP_[A-Z_]+$/ === k) || v.nil?
       end.map do |k, v|
         [reconstruct_header_name(k), v]
       end.inject(Utils::HeaderHash.new) do |hash, k_v|
